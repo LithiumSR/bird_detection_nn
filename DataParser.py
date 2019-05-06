@@ -47,6 +47,23 @@ class DataParser:
             batch_output = self.get_input_labels(samples)
             yield (np.array(batch_input), np.array(batch_output))
 
+    def get_dataset_file_names_generator(self):
+        # random_files = np.random.choice(a=self.graph_files_name,size=self.batch_size)
+        i = 0
+        file_list = self.graph_files_name
+        while True:
+            samples = []
+            for b in range(self.batch_size):
+                if i == len(file_list):
+                    i = 0
+                    import random
+                    random.shuffle(file_list)
+                sample = file_list[i]
+                i += 1
+                samples.append(sample)
+            batch_output = self.get_input_labels(samples)
+            yield (samples, np.array(batch_output))
+
     def get_dataset_raw_generator(self):
         i = 0
         file_list = self.raw_files_name
@@ -70,7 +87,7 @@ class DataParser:
         for el in list_filepaths:
             file_name = os.path.splitext(DataParser.path_leaf(el))[0]
             folder = os.path.basename(os.path.dirname(os.path.dirname(el)))
-            ret.append(os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/" + file_name)
+            ret.append(os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/" +self.graph_type+"/" + file_name + ".png")
         return ret
 
     def get_audio_files_name(self):
@@ -89,7 +106,7 @@ class DataParser:
     def _get_raw_files_name(self):
         entries = []
         for folder in self.folders:
-            files = glob.glob(os.getcwd() + "/data/raw/" + self.typeFolder + "/" + folder + "/"+  self.graph_type+ "/*.npy")
+            files = glob.glob(os.getcwd() + "/data/raw/" + self.typeFolder + "/" + folder + "/" + self.graph_type + "/*.npy")
             entries.extend(files)
         return entries
 
