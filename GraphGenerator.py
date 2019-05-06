@@ -73,7 +73,7 @@ if __name__ == '__main__':
     parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Set type of graph')
     parser.add_argument("folder_type", nargs='?', default="training", help='Set folder type')
     parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
-                        help='Number of split in kcross validation (default is 3)')
+                        help='Folders that will be parsed')
     parser.add_argument("additive_noise", nargs='?', type=int, default=0, help='Additive noise')
     parser.add_argument("random_noise", nargs='?', type=bool, default=False, help='Random noise')
     parser.add_argument("time_stretch_rate", nargs='?', type=int, default=1, help='Time stretch')
