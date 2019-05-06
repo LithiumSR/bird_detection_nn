@@ -23,15 +23,33 @@ class DataParser:
             self.folders = ["ff1010bird"]
         self._load_labels()
         self.audio_files_name = self._get_audio_files_name()
+        self.raw_files_name = self._get_raw_files_name()
         self.graph_files_name = self._get_graph_files_name()
 
     def set_augmentation(self, augmentation):
         self.augmentation = augmentation
 
-    def get_dataset_generator(self):
+    def get_dataset_plot_generator(self):
         # random_files = np.random.choice(a=self.graph_files_name,size=self.batch_size)
         i = 0
         file_list = self.graph_files_name
+        while True:
+            samples = []
+            for b in range(self.batch_size):
+                if i == len(file_list):
+                    i = 0
+                    import random
+                    random.shuffle(file_list)
+                sample = file_list[i]
+                i += 1
+                samples.append(sample)
+            batch_input = self.get_input_graphs_data(samples)
+            batch_output = self.get_input_labels(samples)
+            yield (np.array(batch_input), np.array(batch_output))
+
+    def get_dataset_raw_generator(self):
+        i = 0
+        file_list = self.raw_files_name
         while True:
             samples = []
             for b in range(self.batch_size):
@@ -42,17 +60,17 @@ class DataParser:
                 sample = file_list[i]
                 i += 1
                 samples.append(sample)
-            batch_input = self.get_input_graphs_data(samples)
+            batch_input = self.get_input_raw_data(samples)
             batch_output = self.get_input_labels(samples)
-            # print(batch_output)
+            print(np.array(batch_input).shape)
             yield (np.array(batch_input), np.array(batch_output))
 
     def find_graphs_from_graphs(self, list_filepaths):
         ret = []
         for el in list_filepaths:
             file_name = os.path.splitext(DataParser.path_leaf(el))[0]
-            folder = os.path.basename(os.path.dirname(os.path.dirname(file)))
-            ret.append(path = os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/"+file_name)
+            folder = os.path.basename(os.path.dirname(os.path.dirname(el)))
+            ret.append(os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/" + file_name)
         return ret
 
     def get_audio_files_name(self):
@@ -65,6 +83,13 @@ class DataParser:
         entries = []
         for folder in self.folders:
             files = glob.glob(os.getcwd() + "/data/audio/" + self.typeFolder + "/" + folder + "/*.wav")
+            entries.extend(files)
+        return entries
+
+    def _get_raw_files_name(self):
+        entries = []
+        for folder in self.folders:
+            files = glob.glob(os.getcwd() + "/data/raw/" + self.typeFolder + "/" + folder + "/"+  self.graph_type+ "/*.npy")
             entries.extend(files)
         return entries
 
@@ -92,7 +117,7 @@ class DataParser:
             file_name = os.path.splitext(DataParser.path_leaf(file))[0]
             if "_" in file_name:
                 file_name = file_name.split("_")[0]
-            if "graphs" in file:
+            if "graphs" in file or "raw" in file:
                 folder = os.path.basename(os.path.dirname(os.path.dirname(file)))
             else:
                 folder = os.path.basename((os.path.dirname(file)))
@@ -114,4 +139,11 @@ class DataParser:
             img = image.load_img(file, target_size=(224, 224))
             img = image.img_to_array(img)
             entries += [img]
+        return entries
+
+    @staticmethod
+    def get_input_raw_data(files):
+        entries = []
+        for file in files:
+            entries.append(np.load(file, allow_pickle=True))
         return entries
