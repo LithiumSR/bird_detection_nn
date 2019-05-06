@@ -7,41 +7,55 @@ from DataParser import DataParser
 
 
 class NetworkEvaluation:
-    def __init__(self, data_parser, models):
-        self.parser = data_parser
+    def __init__(self, folders, batch_size, models):
         self.models = []
-        for model_name in models:
-            self.models.append(load_model(model_name))
+        self.parsers_by_type = {}
+        self.models_by_type = {}
+
+        for model in models:
+            if model[0] not in self.parsers_by_type:
+                self.parsers_by_type[model[0]] = DataParser(folders=folders, batch_size=batch_size,
+                                                            type_folder="testing", graph_type=model[0])
+                self.models_by_type[model[0]] = []
+            self.models_by_type[model[0]].append(load_model(model[1]))
+        print(self.parsers_by_type)
+        print(self.models_by_type)
 
     def evaluate(self):
         i = 0
         score = 0
-        generator = self.parser.get_dataset_plot_generator()
-        while i < len(self.parser.graph_files_name) // self.parser.batch_size:
-            (inputTesting, outputTrue) = next(generator)
-            output_pos = [0] * self.parser.batch_size
-            for model in self.models:
-                output = model.predict(inputTesting, batch_size=self.parser.batch_size)
-                output_pos = np.amax([output_pos, list(map(lambda x: x[1], output))], axis=0)
-            score += roc_auc_score(outputTrue, output_pos)
+        reference_parser = self.parsers_by_type[list(self.parsers_by_type.keys())[0]]
+        generator = reference_parser.get_dataset_file_names_generator()
+        n_iterations = len(reference_parser.graph_files_name) // reference_parser.batch_size
+        while i < n_iterations:
+            output_pos = [0] * reference_parser.batch_size
+            (names, referenceOutput) = next(generator)
+            for key, value in self.models_by_type.items():
+                iteration_parser = self.parsers_by_type[key]
+                graphs = iteration_parser.find_graphs_from_graphs(names)
+                for model in value:
+                    output = model.predict(np.array(iteration_parser.get_input_graphs_data(graphs)),
+                                           batch_size=reference_parser.batch_size)
+                    output_pos = np.amax([output_pos, list(map(lambda x: x[1], output))], axis=0)
+            score += roc_auc_score(referenceOutput, output_pos)
             i += 1
         print(score / i)
 
 
-def main(models, folders, type_graph, batch_size):
-    data_parser = DataParser(folders=folders, graph_type=type_graph, batch_size=batch_size, type_folder="testing")
-    evaluator = NetworkEvaluation(data_parser, models)
+def main(models, folders, batch_size):
+    evaluator = NetworkEvaluation(folders, batch_size, models)
     evaluator.evaluate()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the data learner")
-    parser.add_argument("models", nargs='?', type=list, default=["leonetv2_melspectrogram.h5", "leonet.h5"],
+    parser.add_argument("models", nargs='?', type=list, default=[("melspectrogram", "leonetv2_melspectrogram.h5"), (
+        "melspectrogram-energy", "leonetv2_melspectrogram-energy.h5")],
                         help='Set models that will be used to '
                              'make the predictions')
-    parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Decide the type of graphs from the '
-                                                                                'testing set that will be analyzed')
     parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
                         help='Set of folders that will be used as the source of the graphs')
+    parser.add_argument("batch_size", nargs='?', default=30,
+                        help='Batch size of the files used to train the model')
     args = parser.parse_args()
-    main(args.models, args.folders, args.type_graph, batch_size=30)
+    main(args.models, args.folders, args.batch_size)
