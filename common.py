@@ -46,12 +46,12 @@ class Utils:
         elif graph_type == "filterbank":
             librosa.display.specshow(data, sr=sr, ax=None, y_axis='log', hop_length=512, x_axis='frames')
         plt.margins(0)
-        ax = fig.get_axes()[0]
-        ax.spines['left'].set_visible(False)
-        ax.spines['top'].set_visible(False)
-        ax.xaxis.label.set_visible(False)
-        ax.yaxis.label.set_visible(False)
-        ax.grid(False)
+        for ax in fig.get_axes():
+            ax.spines['left'].set_visible(False)
+            ax.spines['top'].set_visible(False)
+            ax.xaxis.label.set_visible(False)
+            ax.yaxis.label.set_visible(False)
+            ax.grid(False)
         plt.xticks([])
         plt.yticks([])
         plt.tight_layout()
