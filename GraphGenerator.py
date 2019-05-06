@@ -1,5 +1,6 @@
 import errno
 import os
+import random
 import sys
 import argparse
 import numpy as np
@@ -12,7 +13,7 @@ from common import Utils
 class GraphGenerator:
 
     def __init__(self, type_graph="melspectrogram", folder_type="training", folders=None, augmentation=None,
-                 save_raw=False):
+                 skip_probability=0, save_raw=False, ):
         if folders is None:
             folders = ["ff1010bird"]
         self.files = DataParser(type_folder=folder_type, folders=folders).get_audio_files_name()
@@ -20,9 +21,12 @@ class GraphGenerator:
         self.folder_type = folder_type
         self.aug = augmentation
         self.save_raw = save_raw
+        self.skip_prob = skip_probability
 
     def generateGraph(self):
         for file in tqdm(self.files):
+            if self.trigger_with_prob():
+                pass
             folder = os.path.basename((os.path.dirname(file)))
             file_name = os.path.splitext(DataParser.path_leaf(file))[0]
             if self.aug is not None:
@@ -60,9 +64,12 @@ class GraphGenerator:
                 if exc.errno != errno.EEXIST:
                     raise
 
+    def trigger_with_prob(self):
+        return random.random() > self.skip_prob
 
-def main(type_graph, folder_type, folders, augmentation):
-    g = GraphGenerator(type_graph, folder_type, folders, augmentation)
+
+def main(type_graph, folder_type, folders, augmentation, skip_probability):
+    g = GraphGenerator(type_graph, folder_type, folders, augmentation, skip_probability)
     g.generateGraph()
 
     return
@@ -72,11 +79,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the graph generator")
     parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Set type of graph')
     parser.add_argument("folder_type", nargs='?', default="training", help='Set folder type')
-    parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
+    parser.add_argument("folders", nargs='?', type=list, default=["BirdVoxDCASE20k"],
                         help='Folders that will be parsed')
     parser.add_argument("additive_noise", nargs='?', type=int, default=0, help='Additive noise')
     parser.add_argument("random_noise", nargs='?', type=bool, default=False, help='Random noise')
     parser.add_argument("time_stretch_rate", nargs='?', type=int, default=1, help='Time stretch')
+    parser.add_argument("skip_probability", nargs='?', type=int, default=0, help='Time stretch')
     args = parser.parse_args()
     aug = AudioAugmentation()
     check = False
@@ -91,4 +99,4 @@ if __name__ == '__main__':
         check = True
     if not check:
         aug = None
-    main(args.type_graph, args.folder_type, args.folders, aug)
+    main(args.type_graph, args.folder_type, args.folders, aug, args.skip_probability)
