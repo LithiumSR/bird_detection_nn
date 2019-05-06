@@ -6,13 +6,13 @@ from DataParser import DataParser
 
 
 class DataLearner:
-    def __init__(self, neural_network, data_parser, epochs=20):
+    def __init__(self, neural_network, data_parser, epochs=40):
         self.neural_network = neural_network
         self.epochs = epochs
         self.data_parser = data_parser
 
     def save(self, model):
-        model.save(self.neural_network+"_"+self.data_parser.graph_type+".h5")
+        model.save(self.neural_network + "_" + self.data_parser.graph_type + ".h5")
 
     def train(self):
         generator = self.data_parser.get_dataset_plot_generator()
@@ -31,18 +31,18 @@ class DataLearner:
         elif self.neural_network == "cifar10":
             from models import Cifar10
             model = Cifar10.cifar10_model((1, 224, 224, 3))
-            model.fit_generator(generator=generator, epochs=self.epochs,steps_per_epoch=steps)
+            model.fit_generator(generator=generator, epochs=self.epochs, steps_per_epoch=steps)
             return model
         elif self.neural_network == "leonet":
             from models import LeoNet
             model = LeoNet.leonet_model((1, 224, 224, 3))
-            model.fit_generator(generator=generator,epochs=self.epochs,steps_per_epoch=steps)
+            model.fit_generator(generator=generator, epochs=self.epochs, steps_per_epoch=steps)
             return model
 
         elif self.neural_network == "leonetv2":
             from models import LeoNetV2
             model = LeoNetV2.LeoNetV2_model((1, 224, 224, 3))
-            model.fit_generator(generator=generator, epochs=self.epochs,steps_per_epoch=steps)
+            model.fit_generator(generator=generator, epochs=self.epochs, steps_per_epoch=steps)
             return model
 
 
@@ -51,10 +51,6 @@ def main(neural_network, type_graph, folders, batch_size):
     learner = DataLearner(neural_network, data_parser)
     model = learner.train()
     learner.save(model)
-
-    #from NetworkPredict import NetworkPredict
-    #pred = NetworkPredict(data_parser2, model)
-    #pred.predict()
     return
 
 
@@ -64,7 +60,7 @@ if __name__ == '__main__':
     parser.add_argument("neural_network", nargs='?', default="leonetv2", help='Set nn type')
     parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
                         help='Set of folders that will be used as the source of the graphs')
-    parser.add_argument("batch_size", nargs='?', default=20,
+    parser.add_argument("batch_size", nargs='?', default=30,
                         help='Batch size of the files used to train the model')
     parser.add_argument("epochs", nargs='?', default=1,
                         help='Number of epochs')
