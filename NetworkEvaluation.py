@@ -6,7 +6,7 @@ from sklearn.metrics import roc_auc_score
 from DataParser import DataParser
 
 
-class NetworkPredict:
+class NetworkEvaluation:
     def __init__(self, data_parser, models):
         self.parser = data_parser
         self.models = []
@@ -30,9 +30,9 @@ class NetworkPredict:
 
 
 def main(models, folders, type_graph, batch_size):
-    data_parser = DataParser(folders=folders, graph_type=type_graph, batch_size=batch_size, type_folder="training")
-    predicter = NetworkPredict(data_parser, models)
-    predicter.evaluate()
+    data_parser = DataParser(folders=folders, graph_type=type_graph, batch_size=batch_size, type_folder="testing")
+    evaluator = NetworkEvaluation(data_parser, models)
+    evaluator.evaluate()
 
 
 if __name__ == '__main__':
