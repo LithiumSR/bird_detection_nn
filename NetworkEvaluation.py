@@ -16,14 +16,13 @@ class NetworkEvaluation:
     def evaluate(self):
         i = 0
         score = 0
-        generator = self.parser.get_dataset_generator()
+        generator = self.parser.get_dataset_plot_generator()
         while i < len(self.parser.graph_files_name) // self.parser.batch_size:
-            (input, outputTrue) = next(generator)
-            print(" outputTrue", outputTrue)
+            (inputTesting, outputTrue) = next(generator)
             output_pos = [0] * self.parser.batch_size
             for model in self.models:
-                output = model.predict(input, batch_size=self.parser.batch_size)
-                output_pos = np.amax([output_pos,list(map(lambda x: x[1], output))], axis=0)
+                output = model.predict(inputTesting, batch_size=self.parser.batch_size)
+                output_pos = np.amax([output_pos, list(map(lambda x: x[1], output))], axis=0)
             score += roc_auc_score(outputTrue, output_pos)
             i += 1
         print(score / i)
@@ -37,8 +36,9 @@ def main(models, folders, type_graph, batch_size):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the data learner")
-    parser.add_argument("models", nargs='?', type=list, default=["leonetv2.h5", "leonet.h5"], help='Set models that will be used to '
-                                                                                      'make the predictions')
+    parser.add_argument("models", nargs='?', type=list, default=["leonetv2_melspectrogram.h5", "leonet.h5"],
+                        help='Set models that will be used to '
+                             'make the predictions')
     parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Decide the type of graphs from the '
                                                                                 'testing set that will be analyzed')
     parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
