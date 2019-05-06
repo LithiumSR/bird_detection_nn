@@ -6,7 +6,7 @@ from DataParser import DataParser
 
 
 class DataLearner:
-    def __init__(self, neural_network, data_parser, epochs=40, early_stopping=True, save_best_checkpoint=True):
+    def __init__(self, neural_network, data_parser, epochs=20, early_stopping=True, save_best_checkpoint=True):
         self.neural_network = neural_network
         self.epochs = epochs
         self.data_parser = data_parser
@@ -27,10 +27,10 @@ class DataLearner:
         steps = len(self.data_parser.graph_files_name) // self.data_parser.batch_size
         cb = []
         if self.early_stopping:
-            cb.append(EarlyStopping(monitor='val_loss', mode='min', verbose=1))
+            cb.append(EarlyStopping(monitor='loss', mode='min', verbose=1))
 
         if self.save_best_checkpoint:
-            cb.append(ModelCheckpoint(self.get_model_save_name(checkpoint=True), monitor='val_loss', mode='min',
+            cb.append(ModelCheckpoint(self.get_model_save_name(checkpoint=True), monitor='loss', mode='min',
                                       save_best_only=True))
 
         if self.neural_network == "vgg16":
