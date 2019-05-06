@@ -43,9 +43,17 @@ class DataParser:
                 i += 1
                 samples.append(sample)
             batch_input = self.get_input_graphs_data(samples)
-            batch_output = self.getinputlabels(samples)
-            print(batch_output)
+            batch_output = self.get_input_labels(samples)
+            # print(batch_output)
             yield (np.array(batch_input), np.array(batch_output))
+
+    def find_graphs_from_graphs(self, list_filepaths):
+        ret = []
+        for el in list_filepaths:
+            file_name = os.path.splitext(DataParser.path_leaf(el))[0]
+            folder = os.path.basename(os.path.dirname(os.path.dirname(file)))
+            ret.append(path = os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/"+file_name)
+        return ret
 
     def get_audio_files_name(self):
         return self.audio_files_name
@@ -78,7 +86,7 @@ class DataParser:
                     if elements[2].strip() != "hasbird":
                         self.labels[folder + "_" + elements[0]] = int(elements[2].strip())
 
-    def getinputlabels(self, files):
+    def get_input_labels(self, files):
         labels = []
         for file in files:
             file_name = os.path.splitext(DataParser.path_leaf(file))[0]
