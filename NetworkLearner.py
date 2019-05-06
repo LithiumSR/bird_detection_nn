@@ -24,7 +24,7 @@ class DataLearner:
             model.save("leonetv2.h5")
 
     def train(self):
-        generator = self.parser.get_dataset_generator()
+        generator = self.parser.get_dataset_plot_generator()
         if self.neural_network == "vgg16":
             from models import VGG16
             model = VGG16.vgg16_model()
