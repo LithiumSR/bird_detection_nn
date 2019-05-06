@@ -33,7 +33,7 @@ class Utils:
 
     @staticmethod
     def write_graph(data, sr, file_path, graph_type):
-        plt.figure(figsize=(10, 4))
+        fig = plt.figure(figsize=(10, 4))
         if graph_type == "melspectrogram":
             librosa.display.specshow(data, sr=sr,
                                      y_axis='mel', fmax=8000, x_axis='time', ax=None)
@@ -46,7 +46,7 @@ class Utils:
         elif graph_type == "filterbank":
             librosa.display.specshow(data, sr=sr, ax=None, y_axis='log', hop_length=512, x_axis='frames')
         plt.margins(0)
-        ax = plt.axes()
+        ax = fig.get_axes()[0]
         ax.spines['left'].set_visible(False)
         ax.spines['top'].set_visible(False)
         ax.xaxis.label.set_visible(False)
