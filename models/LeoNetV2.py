@@ -31,7 +31,7 @@ def LeoNetV2_model(X_shape, nb_classes=2, nb_layers=4):
         model.add(Dropout(cl_dropout))
 
     model.add(Flatten())
-    model.add(Dense(128))  # 128 is 'arbitrary' for now
+    model.add(Dense(256))  # 128 is 'arbitrary' for now
     # model.add(Activation('relu'))   # relu (no BN) works ok here, however ELU works a bit better...
     model.add(Activation('elu'))
     model.add(Dropout(dl_dropout))
