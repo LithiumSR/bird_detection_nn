@@ -12,7 +12,7 @@ from common import Utils
 
 class GraphGenerator:
 
-    def __init__(self, type_graph="melspectrogram", folder_type="training", folders=None, augmentation=None,
+    def __init__(self, type_graph, folder_type, folders=None, augmentation=None,
                  skip_probability=0, save_raw=False, ):
         if folders is None:
             folders = ["ff1010bird"]
