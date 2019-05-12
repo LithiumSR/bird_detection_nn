@@ -12,15 +12,13 @@ from AudioAugmentation import AudioAugmentation
 
 class DataParser:
 
-    def __init__(self, type_folder="training", folders=None, graph_type="melspectrogram", batch_size=20):
+    def __init__(self, type_folder, folders, graph_type=None, batch_size=20):
         self.typeFolder = type_folder
         self.folders = folders
         self.graph_type = graph_type
         self.batch_size = batch_size
         self.augmentation = AudioAugmentation()
         self.labels = {}
-        if self.folders is None:
-            self.folders = ["ff1010bird"]
         self._load_labels()
         self.audio_files_name = self._get_audio_files_name()
         self.raw_files_name = self._get_raw_files_name()
