@@ -63,7 +63,7 @@ class DataLearner:
 
 
 def main(neural_network, type_graph, folders, batch_size):
-    data_parser = DataParser(folders=folders, graph_type=type_graph, batch_size=batch_size)
+    data_parser = DataParser("training",folders, type_graph, batch_size=batch_size)
     learner = DataLearner(neural_network, data_parser)
     model = learner.train()
     learner.save(model)
