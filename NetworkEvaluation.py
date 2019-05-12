@@ -36,6 +36,8 @@ class NetworkEvaluation:
                     output = model.predict(np.array(iteration_parser.get_input_graphs_data(graphs)),
                                            batch_size=reference_parser.batch_size)
                     output_pos = np.amax([output_pos, list(map(lambda x: x[1], output))], axis=0)
+            output_classes = list(map(lambda x: [1 - x, x], output_pos))
+            output_classes = np.array(output_classes).argmax(axis=-1)
             score += roc_auc_score(referenceOutput, output_pos)
             i += 1
         print(score / i)
@@ -48,11 +50,11 @@ def main(models, folders, batch_size):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the data learner")
-    parser.add_argument("models", nargs='?', type=list, default=[("melspectrogram", "leonetv2_melspectrogram.h5"), (
-        "melspectrogram-energy", "leonetv2_melspectrogram-energy.h5")],
+    parser.add_argument("models", nargs='?', type=list,
+                        default=[("melspectrogram", "best_leonetv2_melspectrogram.h5")],
                         help='Set models that will be used to '
                              'make the predictions')
-    parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird"],
+    parser.add_argument("folders", nargs='?', type=list, default=["BirdVoxDCASE20k"],
                         help='Set of folders that will be used as the source of the graphs')
     parser.add_argument("batch_size", nargs='?', default=30,
                         help='Batch size of the files used to train the model')

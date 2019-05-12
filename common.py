@@ -25,7 +25,7 @@ class Utils:
 
         elif graph_type == "spectrogram":
             stft = librosa.core.spectrum.stft(data, hop_length=512)
-            return librosa.amplitude_to_db(stft, ref=np.max)
+            return librosa.amplitude_to_db(np.abs(stft), ref=np.max)
 
         elif graph_type == "filterbank":
             S = librosa.feature.melspectrogram(y=data, sr=sr, hop_length=512)
