@@ -14,8 +14,7 @@ class NetworkEvaluation:
 
         for model in models:
             if model[0] not in self.parsers_by_type:
-                self.parsers_by_type[model[0]] = DataParser(folders=folders, batch_size=batch_size,
-                                                            type_folder="testing", graph_type=model[0])
+                self.parsers_by_type[model[0]] = DataParser("testing",folders, model[0], batch_size=batch_size)
                 self.models_by_type[model[0]] = []
             self.models_by_type[model[0]].append(load_model(model[1]))
         print(self.parsers_by_type)
