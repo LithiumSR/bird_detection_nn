@@ -20,7 +20,7 @@ class Utils:
             return librosa.power_to_db(S, ref=np.max)
 
         elif graph_type == "melspectrogram-energy":
-            S = librosa.feature.melspectrogram(y=data, sr=sr)
+            S = librosa.feature.melspectrogram(y=data, sr=sr, power=1)
             return librosa.amplitude_to_db(S, ref=np.max)
 
         elif graph_type == "spectrogram":
