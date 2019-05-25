@@ -12,7 +12,7 @@ from AudioAugmentation import AudioAugmentation
 
 class DataParser:
 
-    def __init__(self, type_folder, folders, graph_type=None, batch_size=20):
+    def __init__(self, type_folder, folders, graph_type=None, batch_size=20, val_percentage=0):
         self.typeFolder = type_folder
         self.folders = folders
         self.graph_type = graph_type
@@ -20,23 +20,47 @@ class DataParser:
         self.augmentation = AudioAugmentation()
         self.labels = {}
         self._load_labels()
+        self.val_percentage = val_percentage
         self.audio_files_name = self._get_audio_files_name()
         self.raw_files_name = self._get_raw_files_name()
         self.graph_files_name = self._get_graph_files_name()
+        self.val_graph_files_name = np.random.choice(self.graph_files_name,
+                                                     int(len(self.graph_files_name) * val_percentage))
+        set_val = set(self.val_graph_files_name)
+        self.graph_files_name = [item for item in self.graph_files_name if item not in set_val]
+        print(len(self.graph_files_name))
 
     def set_augmentation(self, augmentation):
         self.augmentation = augmentation
 
     def get_dataset_plot_generator(self):
-        # random_files = np.random.choice(a=self.graph_files_name,size=self.batch_size)
         i = 0
         file_list = self.graph_files_name
+        import random
+        random.shuffle(file_list)
         while True:
             samples = []
             for b in range(self.batch_size):
                 if i == len(file_list):
                     i = 0
-                    import random
+                    random.shuffle(file_list)
+                sample = file_list[i]
+                i += 1
+                samples.append(sample)
+            batch_input = self.get_input_graphs_data(samples)
+            batch_output = self.get_input_labels(samples)
+            yield (np.array(batch_input), np.array(batch_output))
+
+    def get_dataset_plot_val_generator(self):
+        i = 0
+        file_list = self.val_graph_files_name
+        import random
+        random.shuffle(file_list)
+        while True:
+            samples = []
+            for b in range(self.batch_size):
+                if i == len(file_list):
+                    i = 0
                     random.shuffle(file_list)
                 sample = file_list[i]
                 i += 1
@@ -46,15 +70,15 @@ class DataParser:
             yield (np.array(batch_input), np.array(batch_output))
 
     def get_dataset_file_names_generator(self):
-        # random_files = np.random.choice(a=self.graph_files_name,size=self.batch_size)
+        import random
         i = 0
         file_list = self.graph_files_name
+        random.shuffle(file_list)
         while True:
             samples = []
             for b in range(self.batch_size):
                 if i == len(file_list):
                     i = 0
-                    import random
                     random.shuffle(file_list)
                 sample = file_list[i]
                 i += 1
@@ -65,13 +89,14 @@ class DataParser:
     def get_dataset_raw_generator(self):
         i = 0
         file_list = self.raw_files_name
+        import random
+        random.shuffle(file_list)
         while True:
             samples = []
             for b in range(self.batch_size):
                 if i == len(file_list):
                     i = 0
-                    import random
-                    random.shuffle(self.graph_files_name)
+                    random.shuffle(file_list)
                 sample = file_list[i]
                 i += 1
                 samples.append(sample)
@@ -85,7 +110,7 @@ class DataParser:
         for el in list_filepaths:
             file_name = os.path.splitext(DataParser.path_leaf(el))[0]
             folder = os.path.basename(os.path.dirname(os.path.dirname(el)))
-            ret.append(os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/" +self.graph_type+"/" + file_name + ".png")
+            ret.append(os.getcwd() + "/data/graphs/" + self.typeFolder + "/" + folder + "/" + self.graph_type + "/" + file_name + ".png")
         return ret
 
     def get_audio_files_name(self):
