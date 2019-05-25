@@ -16,7 +16,7 @@ class GraphGenerator:
                  skip_probability=0, save_raw=False, ):
         if folders is None:
             folders = ["ff1010bird"]
-        self.files = DataParser(type_folder=folder_type, folders=folders).get_audio_files_name()
+        self.files = DataParser(type_folder=folder_type, folders=folders, graph_type=type_graph).get_audio_files_name()
         self.type_graph = type_graph
         self.folder_type = folder_type
         self.aug = augmentation
@@ -77,9 +77,9 @@ def main(type_graph, folder_type, folders, augmentation, skip_probability):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the graph generator")
-    parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Set type of graph')
-    parser.add_argument("folder_type", nargs='?', default="training", help='Set folder type')
-    parser.add_argument("folders", nargs='?', type=list, default=["BirdVoxDCASE20k"],
+    parser.add_argument("type_graph", nargs='?', default="melspectrogram-energy", help='Set type of graph')
+    parser.add_argument("folder_type", nargs='?', default="testing", help='Set folder type')
+    parser.add_argument("folders", nargs='?', type=list, default=["BirdVoxDCASE20k","ff1010bird","warblrb10k"],
                         help='Folders that will be parsed')
     parser.add_argument("additive_noise", nargs='?', type=int, default=0, help='Additive noise')
     parser.add_argument("random_noise", nargs='?', type=bool, default=False, help='Random noise')
