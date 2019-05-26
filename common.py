@@ -41,8 +41,7 @@ class Utils:
             librosa.display.specshow(data, sr=sr,
                                      y_axis='mel', fmax=8000, x_axis='time', ax=None)
         elif graph_type == "spectrogram":
-            librosa.display.specshow(data, sr=sr, ax=None, y_axis='log',
-                                     x_axis='time')
+            librosa.display.specshow(data, sr=sr, ax=None, y_axis='log')
         elif graph_type == "filterbank":
             librosa.display.specshow(data, sr=sr, ax=None, y_axis='log', hop_length=512, x_axis='frames')
         plt.margins(0)
