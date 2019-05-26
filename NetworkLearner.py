@@ -55,8 +55,9 @@ class DataLearner:
         elif self.neural_network == "leonetv2":
             from models import LeoNetV2
             model = LeoNetV2.LeoNetV2_model((1, 224, 224, 3))
-            model.fit_generator(generator=generator, validation_data=generator_val, validation_steps=val_steps,
+            history = model.fit_generator(generator=generator, validation_data=generator_val, validation_steps=val_steps,
                                 epochs=self.epochs, steps_per_epoch=steps, callbacks=cb)
+            self.print_history(history)
             return model
 
     def print_history(self, history):
@@ -91,7 +92,7 @@ def main(neural_network, type_graph, folders, batch_size, val_percentage):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the data learner")
     parser.add_argument("type_graph", nargs='?', default="melspectrogram", help='Set type of graph')
-    parser.add_argument("neural_network", nargs='?', default="leonet", help='Set nn type')
+    parser.add_argument("neural_network", nargs='?', default="leonetv2", help='Set nn type')
     parser.add_argument("folders", nargs='?', type=list, default=["ff1010bird", "BirdVoxDCASE20k"],
                         help='Set of folders that will be used as the source of the graphs')
     parser.add_argument("batch_size", nargs='?', default=20,
