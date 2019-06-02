@@ -28,7 +28,6 @@ class DataParser:
                                                      int(len(self.graph_files_name) * val_percentage))
         set_val = set(self.val_graph_files_name)
         self.graph_files_name = [item for item in self.graph_files_name if item not in set_val]
-        print(len(self.graph_files_name))
 
     def set_augmentation(self, augmentation):
         self.augmentation = augmentation
