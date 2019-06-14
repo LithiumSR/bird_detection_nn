@@ -120,5 +120,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print(args)
-    main(args.neural_network, args.type_graph, [item for item in args.folders.strip().split(',')], args.epochs, args.batch_size, args.validation_percentage,
+    main(args.neural_network, args.type_graph, [item.strip() for item in args.folders.strip().split(',')], args.epochs, args.batch_size, args.validation_percentage,
          args.output)

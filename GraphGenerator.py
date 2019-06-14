@@ -100,4 +100,4 @@ if __name__ == '__main__':
         check = True
     if not check:
         aug = None
-    main(args.type_graph, args.folder_type, [item for item in args.folders.strip().split(',')], aug, args.skip_probability)
+    main(args.type_graph, args.folder_type, [item.strip() for item in args.folders.strip().split(',')], aug, args.skip_probability)
