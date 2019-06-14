@@ -43,7 +43,7 @@ class DataLearner:
 
         cb = []
         if self.early_stopping and self.use_validation_set:
-            cb.append(EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2))
+            cb.append(EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=5))
 
         if self.save_best_checkpoint:
             cb.append(ModelCheckpoint(self.get_model_save_name(checkpoint=True), monitor='loss', mode='min',
@@ -80,7 +80,7 @@ class DataLearner:
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.savefig(name + "_acc.png")
-
+        plt.close()
         # summarize history for loss
         plt.plot(history.history['loss'])
         if self.use_validation_set:
@@ -90,12 +90,13 @@ class DataLearner:
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.savefig(name + "_loss.png")
+        plt.close()
 
 
-def main(neural_network, type_graph, folders, epochs, batch_size, val_percentage, output):
+def main(neural_network, type_graph, folders, epochs, batch_size, val_percentage, output, early_stopping):
     data_parser = DataParser("training", folders, type_graph, batch_size=batch_size, val_percentage=val_percentage)
     learner = DataLearner(neural_network, data_parser, epochs=epochs,
-                          use_validation_set=False if val_percentage == 0.0 else True, output=output)
+                          use_validation_set=False if val_percentage == 0.0 else True, output=output, early_stopping=early_stopping)
     model = learner.train()
     learner.save(model)
     return
@@ -115,8 +116,10 @@ if __name__ == '__main__':
                         help='Number of epochs')
     parser.add_argument("output", nargs='?', default="test2",
                         help='Output filename')
+    parser.add_argument("early_stopping", nargs='?', default="False", type=bool,
+                        help='Output filename')
 
     args = parser.parse_args()
     print(args)
     main(args.neural_network, args.type_graph, [item.strip() for item in args.folders.strip().split(',')], args.epochs, args.batch_size, args.validation_percentage,
-         args.output)
+         args.output, args.early_stopping)
