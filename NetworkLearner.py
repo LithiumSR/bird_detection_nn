@@ -80,7 +80,6 @@ class DataLearner:
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.savefig(name + "_acc.png")
-        plt.show()
 
         # summarize history for loss
         plt.plot(history.history['loss'])
@@ -91,7 +90,6 @@ class DataLearner:
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.savefig(name + "_loss.png")
-        plt.show()
 
 
 def main(neural_network, type_graph, folders, epochs, batch_size, val_percentage, output):
