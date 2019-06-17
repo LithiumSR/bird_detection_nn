@@ -23,6 +23,9 @@ class Utils:
             S = librosa.feature.melspectrogram(y=data, sr=sr, power=1)
             return librosa.amplitude_to_db(S, ref=np.max)
 
+        elif graph_type == "mfcc":
+            return librosa.feature.mfcc(y=data, sr=sr)
+
         elif graph_type == "spectrogram":
             stft = librosa.core.spectrum.stft(data, hop_length=512)
             return librosa.amplitude_to_db(np.abs(stft), ref=np.max)
@@ -37,11 +40,14 @@ class Utils:
         if graph_type == "melspectrogram":
             librosa.display.specshow(data, sr=sr,
                                      y_axis='mel', fmax=8000, x_axis='time', ax=None)
+        elif graph_type == "mfcc":
+            librosa.display.specshow(data, sr=sr,
+                                     x_axis='time', ax=None)
         elif graph_type == "melspectrogram-energy":
             librosa.display.specshow(data, sr=sr,
                                      y_axis='mel', fmax=8000, x_axis='time', ax=None)
         elif graph_type == "spectrogram":
-            librosa.display.specshow(data, sr=sr, ax=None, y_axis='log')
+            librosa.display.specshow(data, sr=sr, ax=None, y_axis='log', x_axis='time')
         elif graph_type == "filterbank":
             librosa.display.specshow(data, sr=sr, ax=None, y_axis='log', hop_length=512, x_axis='frames')
         plt.margins(0)
