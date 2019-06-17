@@ -49,16 +49,19 @@ def main(models, folders, batch_size):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Customization options for the data learner")
+    parser = argparse.ArgumentParser(description="Customization options for the network evaluation script")
     parser.add_argument("models", nargs='?',
-                        default="melspectrogram,leonet_melspectrogram_ff_wr.h5 spectrogram,leonet_melspectrogram_ff_wr.h5",
+                        default="spectrogram,leonetv2_spectrogram_ww_b20.h5 melspectrogram-energy,"
+                                "leonetv2_melspectrogram-energy_ww_b20.h5",
                         help='Set models that will be used to '
-                             'make the predictions')
-    parser.add_argument("folders", nargs='?', default="BirdVoxDCASE20k",
+                             'make the predictions (e.g: "type_graph1,model1.h5 type_graph2,model2.h5")')
+    parser.add_argument("folders", nargs='?', default="ff1010bird",
                         help='Set of folders that will be used as the source of the graphs')
     parser.add_argument("batch_size", nargs='?', default=30,
-                        help='Batch size of the files used to train the model')
+                        help='Batch size of the files used to evaluate model')
     args = parser.parse_args()
-    print([(item.strip().split(",")[0], item.strip().split(",")[1]) for item in args.models.strip().split(" ")])
-    main([(item.strip().split(",")[0], item.strip().split(",")[1]) for item in args.models.strip().split(" ")],
+    models = str(args.models.strip())
+    if models.endswith(","):
+        models = models[:-1]
+    main([(item.strip().split(",")[0], item.strip().split(",")[1]) for item in models.split(" ")],
          [item for item in args.folders.strip().split(',')], args.batch_size)

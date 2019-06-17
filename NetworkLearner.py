@@ -103,23 +103,23 @@ def main(neural_network, type_graph, folders, epochs, batch_size, val_percentage
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Customization options for the data learner")
-    parser.add_argument("type_graph", nargs='?', default="spectrogram", help='Set type of graph')
-    parser.add_argument("neural_network", nargs='?', default="leonet", help='Set nn type')
-    parser.add_argument("folders", nargs='?', default="BirdVoxDCASE20k,ff1010bird",
+    parser = argparse.ArgumentParser(description="Customization options for the network learner")
+    parser.add_argument("graph_type", nargs='?', default="mfcc", help='Set type of graph (i.e: mfcc/melspectrogram/melspectrogram-energy/spectrogram)')
+    parser.add_argument("neural_network", nargs='?', default="leonetv2", help='Set the network you want to train (i.e: LeoNet/LeoNetV2)')
+    parser.add_argument("folders", nargs='?', default="warblrb10k,ff1010bird",
                         help='Set of folders that will be used as the source of the graphs')
     parser.add_argument("batch_size", nargs='?', type=int, default=20,
                         help='Batch size of the files used to train the model')
-    parser.add_argument("validation_percentage", nargs='?', type=float, default=0.15,
+    parser.add_argument("validation_percentage", nargs='?', type=float, default=0.0,
                         help='Batch size of the files used to train the model')
-    parser.add_argument("epochs", nargs='?', type=int, default=1,
+    parser.add_argument("epochs", nargs='?', type=int, default=30,
                         help='Number of epochs')
-    parser.add_argument("output", nargs='?', default="test2",
+    parser.add_argument("output", nargs='?', default="leonetv2_mfcc_ff_ww",
                         help='Output filename')
     parser.add_argument("early_stopping", nargs='?', default="False", type=bool,
-                        help='Output filename')
+                        help='Use early stopping when training the model')
 
     args = parser.parse_args()
     print(args)
-    main(args.neural_network, args.type_graph, [item.strip() for item in args.folders.strip().split(',')], args.epochs, args.batch_size, args.validation_percentage,
-         args.output, args.early_stopping)
+    main(str(args.neural_network).lower(), str(args.graph_type).lower(), [item.strip() for item in args.folders.strip().split(',')], args.epochs, args.batch_size, args.validation_percentage,
+         args.output, False)

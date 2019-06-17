@@ -77,14 +77,14 @@ def main(type_graph, folder_type, folders, augmentation, skip_probability):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Customization options for the graph generator")
-    parser.add_argument("type_graph", nargs='?', default="spectrogram", help='Set type of graph')
-    parser.add_argument("folder_type", nargs='?', default="training", help='Set folder type')
+    parser.add_argument("graph_type", nargs='?', default="mfcc", help='Set type of graph (i.e: mfcc/melspectrogram/melspectrogram-energy/spectrogram)')
+    parser.add_argument("folder_type", nargs='?', default="testing", help='Set folder type (e.g: training or testing)')
     parser.add_argument("folders", nargs='?', default="BirdVoxDCASE20k,ff1010bird,warblrb10k",
-                        help='Folders that will be parsed')
+                        help='Folders from which the audio files will be taken (e.g: "folder1,folder2")')
     parser.add_argument("additive_noise", nargs='?', type=int, default=0, help='Additive noise')
     parser.add_argument("random_noise", nargs='?', type=bool, default=False, help='Random noise')
     parser.add_argument("time_stretch_rate", nargs='?', type=int, default=1, help='Time stretch')
-    parser.add_argument("skip_probability", nargs='?', type=int, default=0, help='Time stretch')
+    parser.add_argument("skip_probability", nargs='?', type=int, default=0, help='Probability of skipping an augmentation regarding a file')
     args = parser.parse_args()
     print(args)
     aug = AudioAugmentation()
@@ -100,4 +100,4 @@ if __name__ == '__main__':
         check = True
     if not check:
         aug = None
-    main(args.type_graph, args.folder_type, [item.strip() for item in args.folders.strip().split(',')], aug, args.skip_probability)
+    main(str(args.graph_type).lower(), str(args.folder_type).lower(), [item.strip() for item in args.folders.strip().split(',')], aug, args.skip_probability)
