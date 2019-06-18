@@ -1,0 +1,7 @@
+matplotlib
+Keras
+numpy
+librosa
+tqdm
+scikit_learn
+tensorflow
